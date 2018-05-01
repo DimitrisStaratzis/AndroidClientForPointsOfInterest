@@ -3,7 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/AndroidClientForPointsOfInterest.iml" filepath="$PROJECT_DIR$/AndroidClientForPointsOfInterest.iml" />
+      <module fileurl="file://C:\Users\Stratos\Documents\Android Studio Projects\AndroidClientForPointsOfInterest\AndroidClientForPointsOfInterest.iml" filepath="C:\Users\Stratos\Documents\Android Studio Projects\AndroidClientForPointsOfInterest\AndroidClientForPointsOfInterest.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://C:\Users\Stratos\Documents\Android Studio Projects\AndroidClientForPointsOfInterest\app\app.iml" filepath="C:\Users\Stratos\Documents\Android Studio Projects\AndroidClientForPointsOfInterest\app\app.iml" />
     </modules>
   </component>
 </project>
