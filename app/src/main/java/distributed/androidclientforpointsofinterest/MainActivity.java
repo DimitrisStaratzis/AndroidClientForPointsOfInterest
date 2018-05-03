@@ -32,8 +32,14 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View view)
             {
                 Intent goToMpaps = new Intent(MainActivity.this, MapsActivity.class);
-                String example = userName.getText().toString() + pois.getText().toString();
-                goToMpaps.putExtra("Coordinates", example);//This method send he coordinates to the maps activity
+                Client client = new Client();
+                Integer[] topK = client.connectToMaster(userName.getText().toString(), pois.getText().toString());
+                for (int i = 0; i<topK.length; i++)
+                {
+                System.out.println(topK[i]);
+                }
+                //String example;
+                //goToMpaps.putExtra("Coordinates", example);//This method send he coordinates to the maps activity
                 startActivity(goToMpaps);
             }
         });
