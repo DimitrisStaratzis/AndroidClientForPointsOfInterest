@@ -26,15 +26,22 @@ public class ClientThread implements Runnable
         ObjectInputStream in = null;
         try
         {
-
             /* Create socket for contacting the server on port 7777*/
-            requestSocket = new Socket("169.254.144.124", 7777);
-            out = new ObjectOutputStream(requestSocket.getOutputStream());
-            in = new ObjectInputStream(requestSocket.getInputStream());
+            requestSocket = new Socket("169.254.223.171", 7777);
+            if(requestSocket.isConnected())
+            {
+                out = new ObjectOutputStream(requestSocket.getOutputStream());
+                in = new ObjectInputStream(requestSocket.getInputStream());
 
-            out.writeObject(user+";"+k);
-            out.flush();
-            topKIndexes = (Integer[])in.readObject();
+                out.writeObject(user+";"+k);
+                out.flush();
+                topKIndexes = (Integer[])in.readObject();
+            }
+            else
+            {
+                System.out.println("MALAKAS");
+            }
+
             /*for (int i = 0; i<topKIndexes.length; i++)
             {
                 System.out.println(topKIndexes[i] + "thread");
@@ -56,9 +63,9 @@ public class ClientThread implements Runnable
                 in.close();
                 out.close();
                 requestSocket.close();
-            } catch (IOException ioException)
+            } catch (Exception e)
             {
-                ioException.printStackTrace();
+                e.printStackTrace();
             }
         }
 

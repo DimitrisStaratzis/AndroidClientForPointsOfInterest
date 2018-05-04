@@ -18,11 +18,6 @@ import java.net.*;
 public class Client
 {
 
-    /*public static void main(String args[])
-    {
-        new Client().connectToMaster();
-    }*/
-
     /**
      * This method connects to Master using a requestSocket
      */
@@ -34,7 +29,7 @@ public class Client
         t.start();
 
         try{
-            t.join();
+            t.join(5000);
         }catch(Exception e)
         {
 
