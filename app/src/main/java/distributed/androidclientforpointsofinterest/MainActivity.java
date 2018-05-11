@@ -1,12 +1,12 @@
 package distributed.androidclientforpointsofinterest;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EdgeEffect;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -16,6 +16,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         final Button viewOnMap = (Button)findViewById(R.id.goToMapButton);
@@ -37,6 +38,11 @@ public class MainActivity extends AppCompatActivity
                 if(!userName.getText().toString().equals("") && !pois.getText().toString().equals(""))
                 {
                     Intent goToMpaps = new Intent(MainActivity.this, MapsActivity.class);
+                    ProgressDialog progress = new ProgressDialog(MainActivity.this);
+                    progress.setMessage("Please wait...");
+                    progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                    progress.setIndeterminate(false);
+                    progress.show();
                     Client client = new Client();
                     Integer[] topK = client.connectToMaster(userName.getText().toString(), pois.getText().toString());
                     if(topK != null)
