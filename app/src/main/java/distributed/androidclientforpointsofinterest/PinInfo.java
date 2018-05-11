@@ -25,8 +25,8 @@ public class PinInfo extends AppCompatActivity
         TextView name =findViewById(R.id.nameValue);
         TextView category = findViewById(R.id.categoryValue);
         TextView link =findViewById(R.id.photosLinkValue);
-        name.setText(ClientThread.poisInfo[index].getName());
-        category.setText(ClientThread.poisInfo[index].getCategory());
-        link.setText(ClientThread.poisInfo[index].getPhotosLink());
+        name.setText(MainActivity.poisInfo[index].getName());
+        category.setText(MainActivity.poisInfo[index].getCategory());
+        link.setText(MainActivity.poisInfo[index].getPhotosLink());
     }
 }

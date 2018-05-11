@@ -32,8 +32,10 @@
             android:value="@string/google_maps_key" />
 
         <activity
+            android:theme="@style/AppTheme.NoActionBar"
             android:name=".MapsActivity"
-            android:label="@string/title_activity_maps"></activity>
+            android:label="@string/title_activity_maps">
+        </activity>
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
@@ -44,7 +46,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PinInfo"></activity>
+        <activity android:name=".PinInfo"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

@@ -5,13 +5,24 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.AsyncTask;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
+import distributed.POIS;
+
 public class MainActivity extends AppCompatActivity
 {
+    public static Integer[] topKIndexes;
+    public static POIS[] poisInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -38,19 +49,18 @@ public class MainActivity extends AppCompatActivity
                 if(!userName.getText().toString().equals("") && !pois.getText().toString().equals(""))
                 {
                     Intent goToMpaps = new Intent(MainActivity.this, MapsActivity.class);
-                    ProgressDialog progress = new ProgressDialog(MainActivity.this);
-                    progress.setMessage("Please wait...");
-                    progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                    progress.setIndeterminate(false);
-                    progress.show();
-                    Client client = new Client();
-                    Integer[] topK = client.connectToMaster(userName.getText().toString(), pois.getText().toString());
-                    if(topK != null)
+                    AsyncTaskRunner runner = new AsyncTaskRunner();
+                    try{
+                        poisInfo = runner.execute(userName.getText().toString(), pois.getText().toString()).get();
+                    }catch(Exception e)
                     {
-                        for (int i = 0; i<topK.length; i++)
-                        {
-                            System.out.println(topK[i]);
-                        }
+
+                    }
+                    poisInfo = runner.getPoisInfo();
+                    topKIndexes = runner.getTopKIndexes();
+                    startActivity(goToMpaps);
+                    /*if(topK != null)
+                    {
                         startActivity(goToMpaps);
                     }else
                     {
@@ -60,7 +70,7 @@ public class MainActivity extends AppCompatActivity
 
                         Toast toast = Toast.makeText(context, text, duration);
                         toast.show();
-                    }
+                    }*/
                 }else
                 {
                     Context context = getApplicationContext();
@@ -104,7 +114,97 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
+    }
 
+    private class AsyncTaskRunner extends AsyncTask<String, String, POIS[]>
+    {
+        ProgressDialog progress;
+        public Integer[] topKIndexes;
+        public POIS[] poisInfo;
+
+        public Integer[] getTopKIndexes()
+        {
+            return topKIndexes;
+        }
+
+        public POIS[] getPoisInfo()
+        {
+            return poisInfo;
+        }
+
+
+        @Override
+        protected POIS[] doInBackground(String... params) {
+            publishProgress("Sleeping..."); // Calls onProgressUpdate()
+            String user  = params[0];
+            String pois = params[1];
+
+            Socket requestSocket = null;
+            ObjectOutputStream out = null;
+            ObjectInputStream in = null;
+            try
+            {
+                /* Create socket for contacting the server on port 7777*/
+                requestSocket = new Socket("169.254.33.44", 7777);
+                if(requestSocket.isConnected())
+                {
+                    out = new ObjectOutputStream(requestSocket.getOutputStream());
+                    in = new ObjectInputStream(requestSocket.getInputStream());
+
+                    out.writeObject(pois+";"+user);
+                    out.flush();
+                    topKIndexes = (Integer[])in.readObject();
+                    poisInfo = (POIS[])in.readObject();
+                    for (int i = 0; i<topKIndexes.length; i++)
+                    {
+                        System.out.println(topKIndexes[i] + " KENO " +poisInfo[i]);
+                    }
+                }
+                else
+                {
+                    System.out.println("MALAKAS");
+                }
+
+
+            } catch (UnknownHostException unknownHost)
+            {
+                System.err.println("Unknown host");
+            } catch (IOException ioException)
+            {
+                ioException.printStackTrace();
+            } catch (ClassNotFoundException cnfe)
+            {
+
+            } finally
+            {
+                try
+                {
+                    in.close();
+                    out.close();
+                    requestSocket.close();
+                } catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+            return poisInfo;
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progress = new ProgressDialog(MainActivity.this);
+
+
+        }
+
+        @Override
+        protected void onProgressUpdate(String... text) {
+            progress.setMessage("Please wait...");
+            progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progress.setIndeterminate(false);
+            progress.show();
+        }
 
     }
 }

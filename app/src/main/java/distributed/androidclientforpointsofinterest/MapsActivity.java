@@ -43,9 +43,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap)
     {
         mMap = googleMap;
-        for(int i=0; i< ClientThread.poisInfo.length; i++)
+        for(int i=0; i< MainActivity.poisInfo.length; i++)
         {
-            LatLng pin = new LatLng(ClientThread.poisInfo[i].getLatitude(), ClientThread.poisInfo[i].getLongtitude());
+            LatLng pin = new LatLng(MainActivity.poisInfo[i].getLatitude(), MainActivity.poisInfo[i].getLongtitude());
             marker = mMap.addMarker(new MarkerOptions().position(pin));
             marker.setTag(i);
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pin, 11.0f));
