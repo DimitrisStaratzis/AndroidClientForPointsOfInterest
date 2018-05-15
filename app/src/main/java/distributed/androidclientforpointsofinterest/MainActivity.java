@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity
     public static Integer[] topKIndexes;
     public static POIS[] poisInfo;
     public static String ipAddress;
+    public static POIS locationPoi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity
         final EditText ip = findViewById(R.id.ipEditText);
         final SeekBar seekBar = findViewById(R.id.seekBar);
         final TextView progressText = findViewById(R.id.progress);
+        final EditText userLocation = findViewById(R.id.locationEditText);
         userName.setAlpha(0.5f);
         pois.setAlpha(0.5f);
         ip.setAlpha(0.5f);
@@ -83,13 +85,14 @@ public class MainActivity extends AppCompatActivity
                     Intent goToMpaps = new Intent(MainActivity.this, MapsActivity.class);
                     AsyncTaskRunner runner = new AsyncTaskRunner();
                     try{
-                        poisInfo = runner.execute(userName.getText().toString(), pois.getText().toString()).get(5000, TimeUnit.MILLISECONDS);
+                        poisInfo = runner.execute(userName.getText().toString(), pois.getText().toString(), userLocation.getText().toString()).get(5000, TimeUnit.MILLISECONDS);
                     }catch(Exception e)
                     {
 
                     }
                     poisInfo = runner.getPoisInfo();
                     topKIndexes = runner.getTopKIndexes();
+                    locationPoi = runner.getLocationPoi();
                     if(poisInfo!=null && topKIndexes!=null)
                     {
                         startActivity(goToMpaps);
@@ -159,6 +162,7 @@ public class MainActivity extends AppCompatActivity
     {
         public Integer[] topKIndexes;
         public POIS[] poisInfo;
+        public POIS locationPoi;
 
         public Integer[] getTopKIndexes()
         {
@@ -170,11 +174,15 @@ public class MainActivity extends AppCompatActivity
             return poisInfo;
         }
 
+        public POIS getLocationPoi() {
+            return locationPoi;
+        }
 
         @Override
         protected POIS[] doInBackground(String... params) {
             String user  = params[0];
             String pois = params[1];
+            String location = params[2];
 
             Socket requestSocket = null;
             ObjectOutputStream out = null;
@@ -182,16 +190,17 @@ public class MainActivity extends AppCompatActivity
             try
             {
                 /* Create socket for contacting the server on port 7777*/
-                requestSocket = new Socket(ipAddress, 7777);
+                requestSocket = new Socket(ipAddress, 4200);
                 if(requestSocket.isConnected())
                 {
                     out = new ObjectOutputStream(requestSocket.getOutputStream());
                     in = new ObjectInputStream(requestSocket.getInputStream());
 
-                    out.writeObject(pois+";"+user);
+                    out.writeObject(pois+";"+user+";"+location);
                     out.flush();
                     topKIndexes = (Integer[])in.readObject();
                     poisInfo = (POIS[])in.readObject();
+                    locationPoi = (POIS)in.readObject();
                     for (int i = 0; i<topKIndexes.length; i++)
                     {
                         System.out.println(topKIndexes[i] + " KENO " +poisInfo[i]);

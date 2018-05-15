@@ -10,6 +10,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -45,19 +46,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap)
     {
         mMap = googleMap;
-        LatLng centerPin = new LatLng(40.748817, -73.985428);
+        final LatLng centerPin = new LatLng(MainActivity.locationPoi.getLatitude(), MainActivity.locationPoi.getLongtitude());
+        mMap.addMarker(new MarkerOptions()
+                .position(centerPin)
+                .title("You are here")
+                .alpha(0.3f)
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(centerPin, 12.0f));
+        mMap.addCircle(new CircleOptions()
+                .center(centerPin)
+                .radius(MainActivity.kilometers * 1000)
+                .strokeWidth(10)
+                .strokeColor(Color.RED)
+                .fillColor(Color.TRANSPARENT));
+
         for(int i=0; i< MainActivity.poisInfo.length; i++)
         {
             LatLng pin = new LatLng(MainActivity.poisInfo[i].getLatitude(), MainActivity.poisInfo[i].getLongtitude());
             marker = mMap.addMarker(new MarkerOptions().position(pin));
             marker.setTag(i);
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pin, 11.0f));
-            mMap.addCircle(new CircleOptions()
-                    .center(centerPin)
-                    .radius(MainActivity.kilometers * 1000)
-                    .strokeWidth(10)
-                    .strokeColor(Color.RED)
-                    .fillColor(Color.TRANSPARENT));
             mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener()
             {
                 @Override
@@ -68,6 +75,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     i.putExtra("pinIndex", index);
                     startActivity(i);
                     return false;
+
+
+
                 }
             });
 
