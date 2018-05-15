@@ -9,6 +9,8 @@ import android.os.AsyncTask;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -16,26 +18,55 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.concurrent.TimeUnit;
 
 import distributed.POIS;
 
 public class MainActivity extends AppCompatActivity
 {
+    static int kilometers;
     public static Integer[] topKIndexes;
     public static POIS[] poisInfo;
+    public static String ipAddress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
 
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final Button viewOnMap = (Button)findViewById(R.id.goToMapButton);
-        final EditText userName = (EditText)findViewById(R.id.User);
-        final EditText pois = (EditText)findViewById(R.id.poisReqested);
+        final Button viewOnMap = findViewById(R.id.goToMapButton);
+        final EditText userName = findViewById(R.id.User);
+        final EditText pois = findViewById(R.id.poisReqested);
+        final EditText ip = findViewById(R.id.ipEditText);
+        final SeekBar seekBar = findViewById(R.id.seekBar);
+        final TextView progressText = findViewById(R.id.progress);
         userName.setAlpha(0.5f);
         pois.setAlpha(0.5f);
+        ip.setAlpha(0.5f);
 
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
+        {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean b)
+            {
+                kilometers=progress;
+                progressText.setText(progress+"");
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar)
+            {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar)
+            {
+
+            }
+        });
         viewOnMap.setOnClickListener(new View.OnClickListener()
         {
             /**
@@ -46,31 +77,27 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View view)
             {
 
-                if(!userName.getText().toString().equals("") && !pois.getText().toString().equals(""))
+                if(!userName.getText().toString().equals("") && !pois.getText().toString().equals("") && !ip.getText().toString().equals(""))
                 {
+                    ipAddress=ip.getText().toString();
                     Intent goToMpaps = new Intent(MainActivity.this, MapsActivity.class);
                     AsyncTaskRunner runner = new AsyncTaskRunner();
                     try{
-                        poisInfo = runner.execute(userName.getText().toString(), pois.getText().toString()).get();
+                        poisInfo = runner.execute(userName.getText().toString(), pois.getText().toString()).get(5000, TimeUnit.MILLISECONDS);
                     }catch(Exception e)
                     {
 
                     }
                     poisInfo = runner.getPoisInfo();
                     topKIndexes = runner.getTopKIndexes();
-                    startActivity(goToMpaps);
-                    /*if(topK != null)
+                    if(poisInfo!=null && topKIndexes!=null)
                     {
                         startActivity(goToMpaps);
                     }else
                     {
-                        Context context = getApplicationContext();
-                        CharSequence text = "Unable to connect.";
-                        int duration = Toast.LENGTH_SHORT;
+                        Toast.makeText(MainActivity.this, "Unable to connect with server", Toast.LENGTH_LONG).show();
+                    }
 
-                        Toast toast = Toast.makeText(context, text, duration);
-                        toast.show();
-                    }*/
                 }else
                 {
                     Context context = getApplicationContext();
@@ -100,6 +127,18 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        ip.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus) {
+                    ip.setAlpha(1);
+                }else
+                {
+                    ip.setAlpha(0.5f);
+                }
+            }
+        });
+
         /**
          * This focus change listener makes the selection of an edit text visible
          */
@@ -118,7 +157,6 @@ public class MainActivity extends AppCompatActivity
 
     private class AsyncTaskRunner extends AsyncTask<String, String, POIS[]>
     {
-        ProgressDialog progress;
         public Integer[] topKIndexes;
         public POIS[] poisInfo;
 
@@ -135,7 +173,6 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         protected POIS[] doInBackground(String... params) {
-            publishProgress("Sleeping..."); // Calls onProgressUpdate()
             String user  = params[0];
             String pois = params[1];
 
@@ -145,7 +182,7 @@ public class MainActivity extends AppCompatActivity
             try
             {
                 /* Create socket for contacting the server on port 7777*/
-                requestSocket = new Socket("169.254.33.44", 7777);
+                requestSocket = new Socket(ipAddress, 7777);
                 if(requestSocket.isConnected())
                 {
                     out = new ObjectOutputStream(requestSocket.getOutputStream());
@@ -193,17 +230,11 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         protected void onPreExecute() {
-            progress = new ProgressDialog(MainActivity.this);
-
-
         }
 
         @Override
         protected void onProgressUpdate(String... text) {
-            progress.setMessage("Please wait...");
-            progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            progress.setIndeterminate(false);
-            progress.show();
+
         }
 
     }
