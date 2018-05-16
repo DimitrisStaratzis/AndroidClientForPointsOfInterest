@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity
                     Intent goToMpaps = new Intent(MainActivity.this, MapsActivity.class);
                     AsyncTaskRunner runner = new AsyncTaskRunner();
                     try{
-                        poisInfo = runner.execute(userName.getText().toString(), pois.getText().toString(), userLocation.getText().toString()).get(5000, TimeUnit.MILLISECONDS);
+                        poisInfo = runner.execute(userName.getText().toString(), pois.getText().toString(), userLocation.getText().toString(), kilometers+"").get(5000, TimeUnit.MILLISECONDS);
                     }catch(Exception e)
                     {
 
@@ -183,6 +183,7 @@ public class MainActivity extends AppCompatActivity
             String user  = params[0];
             String pois = params[1];
             String location = params[2];
+            String kilometers = params[3];
 
             Socket requestSocket = null;
             ObjectOutputStream out = null;
@@ -196,7 +197,7 @@ public class MainActivity extends AppCompatActivity
                     out = new ObjectOutputStream(requestSocket.getOutputStream());
                     in = new ObjectInputStream(requestSocket.getInputStream());
 
-                    out.writeObject(pois+";"+user+";"+location);
+                    out.writeObject(pois+";"+user+";"+location+";"+kilometers);
                     out.flush();
                     topKIndexes = (Integer[])in.readObject();
                     poisInfo = (POIS[])in.readObject();

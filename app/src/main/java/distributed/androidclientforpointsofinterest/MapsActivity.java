@@ -50,38 +50,37 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.addMarker(new MarkerOptions()
                 .position(centerPin)
                 .title("You are here")
-                .alpha(0.3f)
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(centerPin, 12.0f));
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))).setTag(-1);
         mMap.addCircle(new CircleOptions()
                 .center(centerPin)
                 .radius(MainActivity.kilometers * 1000)
                 .strokeWidth(10)
                 .strokeColor(Color.RED)
                 .fillColor(Color.TRANSPARENT));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(centerPin, 12.0f));
 
         for(int i=0; i< MainActivity.poisInfo.length; i++)
         {
             LatLng pin = new LatLng(MainActivity.poisInfo[i].getLatitude(), MainActivity.poisInfo[i].getLongtitude());
             marker = mMap.addMarker(new MarkerOptions().position(pin));
             marker.setTag(i);
-            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener()
+
+        }
+
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener()
+        {
+            @Override
+            public boolean onMarkerClick(Marker marker)
             {
-                @Override
-                public boolean onMarkerClick(Marker marker)
-                {
-                    int index = (int)(marker.getTag());
+                int index = (int)(marker.getTag());
+                if(index != -1){
                     Intent i = new Intent(MapsActivity.this, PinInfo.class);
                     i.putExtra("pinIndex", index);
                     startActivity(i);
-                    return false;
-
-
-
                 }
-            });
-
-        }
+                return false;
+            }
+        });
     }
 
 }
