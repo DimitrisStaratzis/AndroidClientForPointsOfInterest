@@ -7,9 +7,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.AsyncTask;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,10 +46,17 @@ public class MainActivity extends AppCompatActivity
         final EditText ip = findViewById(R.id.ipEditText);
         final SeekBar seekBar = findViewById(R.id.seekBar);
         final TextView progressText = findViewById(R.id.progress);
-        final EditText userLocation = findViewById(R.id.locationEditText);
+        final EditText lat = findViewById(R.id.lat);
+        final EditText longt =findViewById(R.id.longt);
+        final Spinner catSpinner = findViewById(R.id.cat_spinner);
         userName.setAlpha(0.5f);
         pois.setAlpha(0.5f);
         ip.setAlpha(0.5f);
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.categories, R.layout.spinner_item);
+        adapter.setDropDownViewResource(R.layout.spinner_item);
+        catSpinner.setAdapter(adapter);
+
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
         {
@@ -81,11 +91,12 @@ public class MainActivity extends AppCompatActivity
 
                 if(!userName.getText().toString().equals("") && !pois.getText().toString().equals("") && !ip.getText().toString().equals(""))
                 {
+                    int category = catSpinner.getSelectedItemPosition();
                     ipAddress=ip.getText().toString();
                     Intent goToMpaps = new Intent(MainActivity.this, MapsActivity.class);
                     AsyncTaskRunner runner = new AsyncTaskRunner();
                     try{
-                        poisInfo = runner.execute(userName.getText().toString(), pois.getText().toString(), userLocation.getText().toString(), kilometers+"").get(5000, TimeUnit.MILLISECONDS);
+                        poisInfo = runner.execute(userName.getText().toString(), pois.getText().toString(), lat.getText().toString(), longt.getText().toString(), kilometers+"", category+"").get(5000, TimeUnit.MILLISECONDS);
                     }catch(Exception e)
                     {
 
@@ -182,8 +193,10 @@ public class MainActivity extends AppCompatActivity
         protected POIS[] doInBackground(String... params) {
             String user  = params[0];
             String pois = params[1];
-            String location = params[2];
-            String kilometers = params[3];
+            String lat = params[2];
+            String longt = params[3];
+            String kilometers = params[4];
+            String category =params[5];
 
             Socket requestSocket = null;
             ObjectOutputStream out = null;
@@ -197,7 +210,7 @@ public class MainActivity extends AppCompatActivity
                     out = new ObjectOutputStream(requestSocket.getOutputStream());
                     in = new ObjectInputStream(requestSocket.getInputStream());
 
-                    out.writeObject(pois+";"+user+";"+location+";"+kilometers);
+                    out.writeObject(pois+";"+user+";"+lat+";"+longt+";"+kilometers+";"+category);
                     out.flush();
                     topKIndexes = (Integer[])in.readObject();
                     poisInfo = (POIS[])in.readObject();
