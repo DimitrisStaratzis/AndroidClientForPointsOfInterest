@@ -61,7 +61,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .strokeWidth(10)
                 .strokeColor(Color.RED)
                 .fillColor(Color.TRANSPARENT));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(centerPin, 12.0f));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(centerPin, 12.0f));
 
         for(int i=0; i< MainActivity.poisInfo.length; i++)
         {
