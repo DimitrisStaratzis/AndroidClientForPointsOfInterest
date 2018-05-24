@@ -204,7 +204,7 @@ public class MainActivity extends AppCompatActivity
             try
             {
                 /* Create socket for contacting the server on port 7777*/
-                requestSocket = new Socket(ipAddress, 4200);
+                requestSocket = new Socket(ipAddress, 4203);
                 if(requestSocket.isConnected())
                 {
                     out = new ObjectOutputStream(requestSocket.getOutputStream());
