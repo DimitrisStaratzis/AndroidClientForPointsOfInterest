@@ -203,7 +203,7 @@ public class MainActivity extends AppCompatActivity
             ObjectInputStream in = null;
             try
             {
-                /* Create socket for contacting the server on port 7777*/
+                /* Create socket for contacting the server on port 4200*/
                 requestSocket = new Socket(ipAddress, 4200);
                 if(requestSocket.isConnected())
                 {
@@ -217,12 +217,12 @@ public class MainActivity extends AppCompatActivity
                     locationPoi = (POIS)in.readObject();
                     for (int i = 0; i<topKIndexes.length; i++)
                     {
-                        System.out.println(topKIndexes[i] + " KENO " +poisInfo[i]);
+                        System.out.println(topKIndexes[i] + "  " +poisInfo[i]);
                     }
                 }
                 else
                 {
-                    System.out.println("MALAKAS");
+                    System.out.println("error");
                 }
 
 
