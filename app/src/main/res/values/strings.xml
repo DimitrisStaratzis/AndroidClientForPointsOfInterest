@@ -3,7 +3,7 @@
     <string name="title_activity_maps">Map</string>
     <string name="title_activity_main">MainActivity</string>
     <string-array name="categories">
-        <item>Click here</item>
+        <item>All categories</item>
         <item>Bars</item>
         <item>Food</item>
         <item>Arts and Entertainment</item>
