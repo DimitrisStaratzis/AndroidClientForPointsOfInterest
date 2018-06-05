@@ -65,6 +65,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         for(int i=0; i< MainActivity.poisInfo.length; i++)
         {
+            if (MainActivity.poisInfo[i] == null)
+                break;
             LatLng pin = new LatLng(MainActivity.poisInfo[i].getLatitude(), MainActivity.poisInfo[i].getLongtitude());
             MainActivity.poisInfo[i].setDistance(CalculationByDistance(pin, centerPin));
             marker = mMap.addMarker(new MarkerOptions().position(pin));

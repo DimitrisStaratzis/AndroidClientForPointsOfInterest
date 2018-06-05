@@ -52,6 +52,8 @@ public class MainActivity extends AppCompatActivity
         userName.setAlpha(0.5f);
         pois.setAlpha(0.5f);
         ip.setAlpha(0.5f);
+        lat.setAlpha(0.5f);
+        longt.setAlpha(0.5f);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.categories, R.layout.spinner_item);
         adapter.setDropDownViewResource(R.layout.spinner_item);
@@ -141,6 +143,9 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        /**
+         * This focus change listener makes the selection of an edit text visible
+         */
         ip.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -156,6 +161,21 @@ public class MainActivity extends AppCompatActivity
         /**
          * This focus change listener makes the selection of an edit text visible
          */
+        longt.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus) {
+                    longt.setAlpha(1);
+                }else
+                {
+                    longt.setAlpha(0.5f);
+                }
+            }
+        });
+
+        /**
+         * This focus change listener makes the selection of an edit text visible
+         */
         pois.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -164,6 +184,21 @@ public class MainActivity extends AppCompatActivity
                 }else
                 {
                     pois.setAlpha(0.5f);
+                }
+            }
+        });
+
+        /**
+         * This focus change listener makes the selection of an edit text visible
+         */
+        lat.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus) {
+                    lat.setAlpha(1);
+                }else
+                {
+                    lat.setAlpha(0.5f);
                 }
             }
         });
